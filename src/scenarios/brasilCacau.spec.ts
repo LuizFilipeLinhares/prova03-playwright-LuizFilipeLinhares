@@ -1,51 +1,38 @@
-import { Page, expect } from '@playwright/test';
-import BrasilCacauElements from './brasilCacauElements';
+// tests/findProduct.spec.ts
 
-export default class BrasilCacauPages {
-  readonly page: Page;
-  readonly elements: BrasilCacauElements;
+import { test, expect } from '@playwright/test';
+import { join } from 'path';
+import { TheConfig } from 'sicolo';
+import BrasilCacauPage from '../support/pages/brasilCacauPages';
 
-  constructor(page: Page) {
-    this.page = page;
-    this.elements = new BrasilCacauElements(page);
-  }
+test.describe('Busca de Produtos - Brasil Cacau', () => {
+  const CONFIG = join(__dirname, '../support/fixtures/config.yml');
+  let brasilCacauPage: BrasilCacauPage;
 
-  // --------------------
-  // 🏠 HOME PAGE
-  // --------------------
-  async openHome(): Promise<void> {
-    await this.page.goto('https://www.brasilcacau.com.br/');
-  }
+  const BASE_URL = TheConfig.fromFile(CONFIG)
+    .andPath('application.base_url')
+    .retrieveData();
 
-  async verifyHomeLoaded(): Promise<void> {
-    await expect(this.page).toHaveURL('https://www.brasilcacau.com.br/');
-    await expect(this.elements.logo).toBeVisible();
-  }
+  const USER_AGENT = TheConfig.fromFile(CONFIG)
+    .andPath('application.user_agent')
+    .retrieveData();
 
-  async goToFaleConosco(): Promise<void> {
-    await this.elements.menuFaleConosco.click();
-  }
+  test.use({
+    userAgent: USER_AGENT,
+    bypassCSP: true
+  });
 
+  test.beforeEach(async ({ page }) => {
+    brasilCacauPage = new BrasilCacauPage(page);
+    await page.goto(BASE_URL);
+    await expect(page).toHaveTitle(/Brasil Cacau/i);
+  });
 
-  async openFaleConosco(): Promise<void> {
-    await this.page.goto('https://www.brasilcacau.com.br/fale-conosco');
-  }
+  test('Deve buscar um produto pelo nome e exibi-lo na listagem', async () => {
+    const termoBusca = 'Trufa';
 
-  async fillForm(nome: string, email: string, mensagem: string, assunto?: string): Promise<void> {
-    await this.elements.nomeInput.fill(nome);
-    await this.elements.emailInput.fill(email);
-    await this.elements.mensagemTextArea.fill(mensagem);
-
-    if (assunto && (await this.elements.assuntoSelect.count()) > 0) {
-      await this.elements.assuntoSelect.selectOption({ label: assunto }).catch(() => {});
-    }
-  }
-
-  async submitForm(): Promise<void> {
-    await this.elements.enviarButton.click();
-  }
-
-  async verifySuccessMessage(): Promise<void> {
-    await this.elements.feedbackMessage.waitFor({ state: 'visible', timeout: 10000 });
-  }
-}
+    await brasilCacauPage.searchProductByName(termoBusca);
+    await brasilCacauPage.checkProductVisible();
+    await brasilCacauPage.checkNameContainsRelevantTerm(termoBusca);
+  });
+});
