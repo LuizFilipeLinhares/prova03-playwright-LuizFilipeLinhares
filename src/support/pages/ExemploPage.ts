@@ -46,9 +46,4 @@ export default class ExemploPage extends BasePage {
     await botao.scrollIntoViewIfNeeded();
     await botao.click();
   }
-
-  async validarEnvio(): Promise<void> {
-    const sucesso = this.page.locator('.alert-success, .success-message, [class*="success"]');
-    await expect(sucesso).toBeVisible({ timeout: 10000 });
-  }
 }

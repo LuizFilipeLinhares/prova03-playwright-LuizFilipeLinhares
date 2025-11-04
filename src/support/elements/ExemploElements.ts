@@ -28,10 +28,14 @@ export default class ExemploElements extends BaseElements {
   }
 
   getCampoMensagem(): Locator {
-    return this.page.locator('input[name="data[Contato][msg]"]');
-  }
+  return this.page.locator('textarea[name="data[Contato][msg]"]');
+}   
   getBotaoEnviar(): Locator {
-    return this.page.locator('button[type="submit"]');
-  }
+  return this.page.locator('.btn_enviar');
+}
+
+getFlashMessage(): Locator {
+  return this.page.locator('#flashMessage');
+}
 
 }
