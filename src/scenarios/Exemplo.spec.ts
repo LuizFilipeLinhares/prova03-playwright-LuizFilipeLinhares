@@ -18,6 +18,13 @@ test.describe('Testes funcionais no site da Giassi Construção', () => {
   test('Validar funcionalidade de contato para falar com eles', async () => {
     await exemploPage.preencherCamposValidos();
     await exemploPage.enviarFormulario();
-    //await exemploPage.validarEnvio();
+  });
+
+  test('Deve exibir o mapa do Google na página de contato', async () => {
+    await exemploPage.validarMapaVisivel();
+  });
+
+  test('Deve carregar a página de contato corretamente', async () => {
+    await exemploPage.validarPaginaCarregada();
   });
 });

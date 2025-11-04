@@ -12,6 +12,9 @@ export default class ExemploPage extends BasePage {
     this.exemploElements = new ExemploElements(page);
   }
 
+  /**
+   * Preenche o formulário com dados válidos gerados automaticamente.
+   */
   async preencherCamposValidos(
     nome?: string,
     sobrenome?: string,
@@ -41,9 +44,41 @@ export default class ExemploPage extends BasePage {
     await el.getCampoMensagem().fill(mensagem || faker.lorem.sentences(2));
   }
 
+  async preencherCampos(campos: {
+    nome?: string;
+    sobrenome?: string;
+    email?: string;
+    telefone?: string;
+    assunto?: string;
+    mensagem?: string;
+  }): Promise<void> {
+    const el = this.exemploElements;
+
+    if (campos.nome !== undefined) await el.getCampoNome().fill(campos.nome);
+    if (campos.sobrenome !== undefined) await el.getCampoSobrenome().fill(campos.sobrenome);
+    if (campos.email !== undefined) await el.getCampoEmail().fill(campos.email);
+    if (campos.telefone !== undefined) await el.getCampoTelefone().fill(campos.telefone);
+    if (campos.assunto !== undefined) await el.getCampoAssunto().fill(campos.assunto);
+    if (campos.mensagem !== undefined) await el.getCampoMensagem().fill(campos.mensagem);
+  }
+
   async enviarFormulario(): Promise<void> {
     const botao = this.exemploElements.getBotaoEnviar();
     await botao.scrollIntoViewIfNeeded();
     await botao.click();
   }
+
+  async validarMapaVisivel(): Promise<void> {
+    const mapa = this.page.locator('img[src="/img/layout/mapa.png"]');
+    await expect(mapa).toBeVisible({ timeout: 10000 });
+  }
+  
+
+  async validarPaginaCarregada(): Promise<void> {
+    await this.page.waitForLoadState('domcontentloaded');
+  }
 }
+
+ 
+  
+

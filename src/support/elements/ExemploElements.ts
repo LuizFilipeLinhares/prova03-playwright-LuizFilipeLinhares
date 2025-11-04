@@ -34,8 +34,14 @@ export default class ExemploElements extends BaseElements {
   return this.page.locator('.btn_enviar');
 }
 
-getFlashMessage(): Locator {
-  return this.page.locator('#flashMessage');
+  getFlashMessage(): Locator {
+    return this.page.locator('#flashMessage');
 }
+  getMapaIframe(): Locator {
+    return this.page.locator('iframe[src*="google.com/maps"]');
+}
+  getCampoNomeError(): Locator {
+    return this.page.locator('input[name="data[Contato][nome]"]');
+  }
 
 }
